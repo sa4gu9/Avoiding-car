@@ -18,7 +18,8 @@ public class bestrecordscript : MonoBehaviour
     {
         if (PlayerPrefs.HasKey("best"))
         {
-            bestrecord.text = "BEST : " + PlayerPrefs.GetString("best");
+            print(PlayerPrefs.GetInt("best"));
+            bestrecord.text = "BEST : " + (float)PlayerPrefs.GetInt("best")/1000;
         }
         else
         {

@@ -19,6 +19,7 @@ public class carmanager : MonoBehaviour
         {
             stw1.Reset();
             roadmanager.speedchange = 1f;
+            roadmanager.reverse = false;
         }
     }
 
@@ -39,13 +40,15 @@ public class carmanager : MonoBehaviour
         print("Trigger");
         if (collision.gameObject.tag == "speedup")
         {
-            roadmanager.speedchange = 0.001f;
+            roadmanager.reverse = false;
+            roadmanager.speedchange = 0.1f;
             stw1.Restart();
         }
 
         if (collision.gameObject.tag == "speeddown")
         {
-            roadmanager.speedchange = 4f;
+            roadmanager.reverse = true;
+            roadmanager.speedchange = 0.3f;
             stw1.Restart();
         }
     }

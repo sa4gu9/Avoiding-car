@@ -17,9 +17,9 @@ public class AvoidGenerator : MonoBehaviour
     float time3;
     void Start()
     {
-        time1 = Random.Range(2.0f, 3.0f);//triangle
-        time2 = Random.Range(1.0f, 4.0f);//speedup
-        time3 = Random.Range(0.5f, 2.0f);//speeddown
+        time1 = 1.3f;//triangle
+        time2 = 6f;//speedup
+        time3 = 0.2f;//speeddown
     }
 
     // Update is called once per frame
@@ -56,24 +56,21 @@ public class AvoidGenerator : MonoBehaviour
 
         if (stw1.ElapsedMilliseconds >= time1 * 1000)
         {
-            GameObject triangle = Instantiate(go1) as GameObject;
-            time1 = Random.Range(3.0f, 5.0f);
+            GameObject triangle = Instantiate(go1);
             triangle.transform.position = new Vector3(Random.Range(-9.0f, 9.0f),58, 0);
             stw1.Restart();
         }
 
         if (stw2.ElapsedMilliseconds >= time2 * 1000)
         {
-            GameObject speedup = Instantiate(go2) as GameObject;
-            time2 = Random.Range(1.0f, 12.0f);
+            GameObject speedup = Instantiate(go2);
             speedup.transform.position = new Vector3(Random.Range(-9.0f, 9.0f), 58, 0);
             stw2.Restart();
         }
 
         if (stw3.ElapsedMilliseconds >= time2 * 1000)
         {
-            GameObject speeddown = Instantiate(go3) as GameObject;
-            time3 = Random.Range(1.0f, 12.0f);
+            GameObject speeddown = Instantiate(go3);
             speeddown.transform.position = new Vector3(Random.Range(-9.0f, 9.0f), 58, 0);
             stw3.Restart();
         }

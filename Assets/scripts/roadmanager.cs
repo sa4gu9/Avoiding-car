@@ -37,6 +37,9 @@ public class roadmanager : MonoBehaviour
     int minute;
     public Image pbar;
 
+    int fulldistance;
+    int fullrun;
+
     public GameObject road1;
     public GameObject road2;
     public GameObject road3;
@@ -47,26 +50,37 @@ public class roadmanager : MonoBehaviour
     public GameObject endline;
     float endlinef;
 
+    int distance_1;
+    int endtime;
+
     public SpriteRenderer sprite;
+
+    public static bool reverse;
 
     // Start is called before the first frame update
     void Start()
     {
+        distance_1 = 5000;
         full = 500;
         continuebutton.gameObject.SetActive(false);
         clear = 0;
         speed = 0;
         stw6.Reset();
         car = GameObject.FindGameObjectWithTag("Player");
-        endline.transform.position = new Vector3(0, 1000 * full/100-sprite.sprite.bounds.size.y, 0);
-        endlinef = endline.transform.position.y;
         
+        endlinef = endline.transform.position.y;
+        endtime = 120;
+        reverse = false;
+
+        fulldistance = distance_1 * full;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (stw6.ElapsedMilliseconds / 1000 >= 60)
+        fullrun = distance_1 * run + temp_run;
+        endline.transform.position = new Vector3(0, (float)(fulldistance-fullrun)/800-sprite.sprite.bounds.size.y, 0);
+        if (stw6.ElapsedMilliseconds / 1000 >= endtime)
         {
             speed = 0;
             txt2.fontSize = 30;
@@ -89,7 +103,7 @@ public class roadmanager : MonoBehaviour
         time = string.Format("{0:D2}.{1:D3}sec", stw6.ElapsedMilliseconds / 1000, stw6.ElapsedMilliseconds % 1000);
         txt3.text = time;
         remain = full - run;
-        pbar.fillAmount = (float)remain / full;
+        pbar.fillAmount = (float)(fulldistance-fullrun) / fulldistance;
         movespeed();
         
 
@@ -126,12 +140,8 @@ public class roadmanager : MonoBehaviour
                 Destroy(startline.gameObject);
                 clear = 1;
             }
-            endline.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
         }
-        else if (clear <= 2)
-        {
-            endline.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
-        }
+
 
 
         if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.LeftArrow))
@@ -151,9 +161,9 @@ public class roadmanager : MonoBehaviour
 
         temp_run += speed;
 
-        if (temp_run >= 1000)
+        if (temp_run >= distance_1)
         {
-            temp_run -= 1000;
+            temp_run = 0;
             run++;
         }
 
@@ -165,44 +175,30 @@ public class roadmanager : MonoBehaviour
             txt2.text = "CLEAR!!!";
             stw6.Stop();
 
+
             if (PlayerPrefs.HasKey("best"))
             {
                 temp = 0;
-                string best = PlayerPrefs.GetString("best");
-                print(best+"     "+ txt3);
-                for (temp = 0; temp<6; temp++)
+                int best = PlayerPrefs.GetInt("best");
+                if (best>stw6.ElapsedMilliseconds)
                 {
-
-                    if (temp == 2)
-                        continue;
-
-                    if (best[temp] > txt3.text[temp])
-                    {
-                        PlayerPrefs.SetString("best", txt3.text);
-                        txt3.text = "best record!!";
-                        break;
-                    }
-                    else if (best[temp] == txt3.text[temp])
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        txt3.text = "slower than best";
-                        break;
-                    }
+                    PlayerPrefs.SetInt("best", (int)stw6.ElapsedMilliseconds);
+                    txt3.text = "best record!!";
                 }
-
-                if (temp == 6)
+                else if(best == stw6.ElapsedMilliseconds)
                 {
                     txt3.text = "same as best";
+                    
                 }
-
+                if (temp == 6)
+                {
+                    txt3.text = "slower than best";
+                }
 
             }
             else
             {
-                PlayerPrefs.SetString("best", txt3.text);
+                PlayerPrefs.SetInt("best", (int)stw6.ElapsedMilliseconds);
                 txt3.text = "best record!!";
             }
 
@@ -210,9 +206,6 @@ public class roadmanager : MonoBehaviour
             
         }
       
-
-        if (temp == 8)
-            txt3.text = "same as best";
 
         if (remain <= -10)
         {
@@ -238,7 +231,16 @@ public class roadmanager : MonoBehaviour
         {
             if (plustime <= stw1.ElapsedMilliseconds)
             {
-                speed++;
+                if (reverse)
+                {
+                    speed--;
+
+                }
+                else
+                {
+                    speed++;
+                    
+                }
                 stw1.Restart();
             }
         }
@@ -261,10 +263,12 @@ public class roadmanager : MonoBehaviour
 
     void moveroad()
     {
-        road1.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
-        road2.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
-        road3.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
-        road4.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
+        float roadspeed = -(speed / 3) * Time.deltaTime;
+
+        road1.transform.Translate(new Vector3(0, roadspeed, 0));
+        road2.transform.Translate(new Vector3(0, roadspeed , 0));
+        road3.transform.Translate(new Vector3(0, roadspeed, 0));
+        road4.transform.Translate(new Vector3(0, roadspeed , 0));
 
         if (road1.transform.position.y <= -41)
         {
@@ -295,9 +299,12 @@ public class roadmanager : MonoBehaviour
 
     void movespeed()
     {
+
+        plustime = Mathf.Round(Mathf.Log(1 + (float)speed / 100) * speedchange * 100 * (speed / 30));
+        /*
         if (speed <= 50)
         {
-            plustime = Mathf.Round(Mathf.Log(1 + (float)speed / 100*speedchange));
+            plustime = Mathf.Round(Mathf.Log(1 + (float)speed / 100) * speedchange * 100 * speed / 100);
         }
         else if (speed <= 100)
         {
@@ -323,6 +330,7 @@ public class roadmanager : MonoBehaviour
         {
             plustime = Mathf.Round(Mathf.Log(1 + (float)speed / 100) * 2100f*speedchange);
         }
+        */
     }
 
     public static void bothstop()
