@@ -60,8 +60,8 @@ public class roadmanager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        distance_1 = 5000;
-        full = 500;
+        distance_1 = 2000;
+        full = 350;
         continuebutton.gameObject.SetActive(false);
         clear = 0;
         speed = 0;
@@ -104,37 +104,15 @@ public class roadmanager : MonoBehaviour
         txt3.text = time;
         remain = full - run;
         pbar.fillAmount = (float)(fulldistance-fullrun) / fulldistance;
-        movespeed();
         
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            startup();
-        }
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            inputup();
-        }
-        else
-        {
-            inputnotup();
-        }
-
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            stw1.Stop();
-            stw1.Reset();
-            stw2.Start();
-        }
 
         txt.text = "Current speed : " + speed;
 
-        moveroad();
+        
 
         if (clear == 0)
         {
-            startline.transform.Translate(new Vector3(0, -((float)speed / 100), 0));
+            startline.transform.Translate(new Vector3(0, -((float)speed / 3)*Time.deltaTime, 0));
             if (startline.transform.position.y < -40)
             {
                 Destroy(startline.gameObject);
@@ -159,13 +137,7 @@ public class roadmanager : MonoBehaviour
 
         
 
-        temp_run += speed;
-
-        if (temp_run >= distance_1)
-        {
-            temp_run = 0;
-            run++;
-        }
+        
 
         if (remain <= 0)
         {
@@ -295,6 +267,43 @@ public class roadmanager : MonoBehaviour
         stw2.Stop();
         stw2.Reset();
         stw1.Start();
+    }
+
+    private void FixedUpdate()
+    {
+        temp_run += speed;
+
+        if (temp_run >= distance_1)
+        {
+            temp_run = 0;
+            run++;
+        }
+
+        movespeed();
+
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            startup();
+        }
+
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            inputup();
+        }
+        else
+        {
+            inputnotup();
+        }
+
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            stw1.Stop();
+            stw1.Reset();
+            stw2.Start();
+        }
+
+        moveroad();
     }
 
     void movespeed()

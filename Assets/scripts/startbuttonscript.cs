@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class startbuttonscript : MonoBehaviour
 {
+    public GameObject deletePanel;
     // Start is called before the first frame update
     void Start()
     {
-        
+        deletePanel.SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -25,6 +27,18 @@ public class startbuttonscript : MonoBehaviour
 
     public void deletebuttonClicked()
     {
+        deletePanel.SetActive(true);
+    }
+
+    public void YesDelete()
+    {
         PlayerPrefs.DeleteKey("best");
+        deletePanel.SetActive(false);
+
+    }
+
+    public void NoDelete()
+    {
+        deletePanel.SetActive(false);
     }
 }

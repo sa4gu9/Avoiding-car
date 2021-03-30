@@ -13,10 +13,7 @@ public class enemyscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gameObject.tag=="speeddown")
-            transform.Translate(new Vector3(0,  (float)roadmanager.speed/600,0));
-        else
-            transform.Translate(new Vector3(0, -((float)roadmanager.speed / 700), 0));
+        transform.Translate(new Vector3(0, -(roadmanager.speed *Time.deltaTime)/3, 0));
 
         if (transform.position.y <= -50)
         {
