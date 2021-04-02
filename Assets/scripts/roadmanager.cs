@@ -53,26 +53,45 @@ public class roadmanager : MonoBehaviour
     int distance_1;
     int endtime;
 
+    int best;
+    int record;
+
     public SpriteRenderer sprite;
 
     public static bool reverse;
 
-    // Start is called before the first frame update
-    void Start()
+    bool isclear;
+    bool recordcheck;
+
+    float horbefore;
+    float horafter;
+
+    private void Awake()
     {
+        car = GameObject.FindGameObjectWithTag("Player");
+        horbefore = car.transform.position.x;
         distance_1 = 2000;
         full = 350;
         continuebutton.gameObject.SetActive(false);
         clear = 0;
         speed = 0;
-        stw6.Reset();
-        car = GameObject.FindGameObjectWithTag("Player");
+
         
+
         endlinef = endline.transform.position.y;
         endtime = 120;
         reverse = false;
 
         fulldistance = distance_1 * full;
+        stw6.Reset();
+        best = 130000;
+        
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        StartCoroutine(CheckDistance());
     }
 
     // Update is called once per frame
@@ -112,7 +131,7 @@ public class roadmanager : MonoBehaviour
 
         if (clear == 0)
         {
-            startline.transform.Translate(new Vector3(0, -((float)speed / 3)*Time.deltaTime, 0));
+            startline.transform.Translate(new Vector3(0, -((float)speed / 6)*Time.deltaTime, 0));
             if (startline.transform.position.y < -40)
             {
                 Destroy(startline.gameObject);
@@ -122,10 +141,7 @@ public class roadmanager : MonoBehaviour
 
 
 
-        if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            bothstop();
-        }
+        
 
         if (stw4.ElapsedMilliseconds >= 1000)
         {
@@ -136,46 +152,58 @@ public class roadmanager : MonoBehaviour
 
 
         
-
+        
         
 
         if (remain <= 0)
         {
+            stw6.Stop();
             continuebutton.gameObject.SetActive(true);
             clear = 2;
             txt2.fontSize = 30;
-            txt2.text = "CLEAR!!!";
-            stw6.Stop();
-
-
-            if (PlayerPrefs.HasKey("best"))
-            {
-                temp = 0;
-                int best = PlayerPrefs.GetInt("best");
-                if (best>stw6.ElapsedMilliseconds)
-                {
-                    PlayerPrefs.SetInt("best", (int)stw6.ElapsedMilliseconds);
-                    txt3.text = "best record!!";
-                }
-                else if(best == stw6.ElapsedMilliseconds)
-                {
-                    txt3.text = "same as best";
-                    
-                }
-                if (temp == 6)
-                {
-                    txt3.text = "slower than best";
-                }
-
-            }
-            else
-            {
-                PlayerPrefs.SetInt("best", (int)stw6.ElapsedMilliseconds);
-                txt3.text = "best record!!";
-            }
+            txt.text = "CLEAR!!!";
+            
+            record = (int)stw6.ElapsedMilliseconds;
 
             
+
+            if (!isclear)
+            {
+                if (File.Exists(RecordManager.path))
+                {
+                    best = RecordManager.LoadRecord();
+
+                }
+
+                isclear = true;
+                recordcheck = true;
+                
+            }
+
+            if (recordcheck && isclear)
+            {
+                if (best > record)
+                {
+                    RecordManager.SaveRecord();
+                    txt2.text = "best record!!";
+                }
+                else if (best < record)
+                {
+
+                    txt2.text = "slower than best";
+                }
+                else
+                {
+
+                    txt2.text = "same as best";
+                }
+            }
+
+
             
+
+
+
         }
       
 
@@ -190,6 +218,7 @@ public class roadmanager : MonoBehaviour
     {
         continuebutton.gameObject.SetActive(false);
         SceneManager.LoadScene("scene_start");
+        
     }
 
     public static void inputup()
@@ -235,7 +264,7 @@ public class roadmanager : MonoBehaviour
 
     void moveroad()
     {
-        float roadspeed = -(speed / 3) * Time.deltaTime;
+        float roadspeed = -(speed / 6) * Time.deltaTime;
 
         road1.transform.Translate(new Vector3(0, roadspeed, 0));
         road2.transform.Translate(new Vector3(0, roadspeed , 0));
@@ -271,6 +300,8 @@ public class roadmanager : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+
         temp_run += speed;
 
         if (temp_run >= distance_1)
@@ -281,29 +312,8 @@ public class roadmanager : MonoBehaviour
 
         movespeed();
 
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            startup();
-        }
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            inputup();
-        }
-        else
-        {
-            inputnotup();
-        }
-
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            stw1.Stop();
-            stw1.Reset();
-            stw2.Start();
-        }
-
         moveroad();
+
     }
 
     void movespeed()
@@ -348,5 +358,20 @@ public class roadmanager : MonoBehaviour
         minus = 0;
         if (stw4.ElapsedMilliseconds == 0)
             stw4.Start();
+    }
+
+    IEnumerator CheckDistance()
+    {
+        
+        horafter = car.transform.position.x;
+
+        speed -= Mathf.FloorToInt(Mathf.Abs(horafter-horbefore));
+        
+        horbefore = car.transform.position.x;
+        yield return new WaitForSeconds(0.1f);
+        StartCoroutine(CheckDistance());
+
+
+
     }
 }

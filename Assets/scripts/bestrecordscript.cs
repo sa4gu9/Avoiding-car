@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,14 +17,17 @@ public class bestrecordscript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayerPrefs.HasKey("best"))
+        if (File.Exists(RecordManager.path))
         {
-            print(PlayerPrefs.GetInt("best"));
-            bestrecord.text = "BEST : " + (float)PlayerPrefs.GetInt("best")/1000;
+            bestrecord.text = "BEST : " + (float)RecordManager.LoadRecord()/1000;
         }
         else
         {
             bestrecord.text = "no record";
         }
     }
+
+    
+
+     
 }

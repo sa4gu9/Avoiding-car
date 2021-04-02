@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using System.IO;
 public class startbuttonscript : MonoBehaviour
 {
     public GameObject deletePanel;
@@ -34,11 +34,20 @@ public class startbuttonscript : MonoBehaviour
     {
         PlayerPrefs.DeleteKey("best");
         deletePanel.SetActive(false);
-
+        DeleteRecord();
     }
 
     public void NoDelete()
     {
         deletePanel.SetActive(false);
+    }
+
+    void DeleteRecord()
+    {
+        
+        if (File.Exists(RecordManager.path)){
+            File.Delete(RecordManager.path);
+
+        }
     }
 }
