@@ -23,18 +23,13 @@ public class RecordManager : MonoBehaviour
 
     public static void SaveRecord()
     {
-        mydata.record = (int)roadmanager.stw6.ElapsedMilliseconds;
-        string jsonData = JsonUtility.ToJson(mydata);
-        File.WriteAllText(path, jsonData);
+        PlayerPrefs.SetInt("best", (int)roadmanager.stw6.ElapsedMilliseconds);
     }
 
     public static int LoadRecord()
     {
-        string jsonData = File.ReadAllText(path);
-        mydata = JsonUtility.FromJson<RecordData>(jsonData);
 
-
-        return mydata.record;
+        return PlayerPrefs.GetInt("best");
     }
 
     [System.Serializable]

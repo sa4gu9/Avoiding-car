@@ -169,7 +169,7 @@ public class roadmanager : MonoBehaviour
 
             if (!isclear)
             {
-                if (File.Exists(RecordManager.path))
+                if (PlayerPrefs.HasKey("best"))
                 {
                     best = RecordManager.LoadRecord();
 
