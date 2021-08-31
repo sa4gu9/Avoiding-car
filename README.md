@@ -21,21 +21,12 @@
     21/03/29 - 21/04/01
 
 ## 사용 언어,프로그램 및 기술
-
-<img src="unity-tab-square-white.png" width="100px" height="100px">
-<img src="Cshap.jpg" width="100px" height="100px">
-<img src="visual studio.jpg" width="100px" height="100px">
-<img src="medibang.jpg" width="100px" height="100px">
-<img src="photoshop.png" width="100px" height="100px">
+unity, csharp, visual studio, medibang paint, photoshop, musescore
 
 [깃허브 링크](https://github.com/sn49/Avoiding-car)
 
 [개선 전 영상](https://youtu.be/UAwgnRIa9gQ)  
 [개선 후 영상](https://youtu.be/O966uqoBm3g)
-
-<img src="avoidingcar/avoidingcar1.png" width="50%" height="50%">
-<img src="avoidingcar/avoidingcar2.png" width="50%" height="50%">
-<img src="avoidingcar/avoidingcar3.png" width="50%" height="50%">
 
 ## 느낀점
 
